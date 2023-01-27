@@ -1,3 +1,3 @@
 # Игра конфетки c ботом в Telegram
 
-![скриншот с телеграм](.\candies_telegram.PNG)
+![скриншот с телеграм](https://raw.githubusercontent.com/SergeiSlobodchikov/game_candies_telegram/main/candies_telegram.PNG)
