@@ -1,5 +1,11 @@
-total = 150
+max_total = 150
+total = max_total
 game = False
+
+def set_total(num: int):
+  global max_total
+  max_total = num
+
 
 def get_total():
   global total
@@ -20,4 +26,4 @@ def new_game():
     game = False
   else:
     game = True
-    total = 150
+    total = max_total

@@ -9,6 +9,20 @@ import random
 async def on_start(message: Message):
    await message.answer(text=f"{message.from_user.first_name}" + f'{text.greeting}')
 
+@dp.message_handler(commands=['set'])
+async def set_total(message: Message):
+  count = message.text.split()[1]
+  if not game_candies.check_game():
+    if count.isdigit():
+      game_candies.set_total(int(count))
+      await message.answer(f'Конфет теперь будет {count}')
+    else:
+      await message.answer(f'{message.from_user.first_name} напиши цифрами')
+  else:
+    await message.answer(f'{message.from_user.first_name} не меняй правила во время игры')
+
+
+
 @dp.message_handler(commands='new_game')
 async def start_new_game(message: Message):
   game_candies.new_game()
@@ -28,7 +42,8 @@ async def take(message: Message):
   if game_candies.check_game():
     if message.text.isdigit():
       take = int(message.text)
-      if (0 < take < 29) and take <= game_candies.get_total() :
+      total = game_candies.get_total()
+      if (0 < take < 29) and take <= total :
         game_candies.take_candies(take)
         if await who_won(message, take,'player'):
           return
@@ -36,7 +51,10 @@ async def take(message: Message):
                              f'{int(game_candies.get_total())} {text.robot}')
         await bot_turn(message)
       else:
-        await message.answer(text.error)
+        if total <= 28:
+          await message.answer(text.error_total(total))
+        else:
+          await message.answer(text.error)
     else:
       pass
 

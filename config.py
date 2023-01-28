@@ -1,4 +1,4 @@
 from aiogram import Bot, Dispatcher
 
-bot = Bot(token = 'token')
+bot = Bot(token = 'TOKEN')
 dp = Dispatcher(bot)
