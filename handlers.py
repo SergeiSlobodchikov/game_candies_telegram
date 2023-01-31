@@ -130,6 +130,7 @@ async def who_won(message, player: str):
         else:
             await message.answer(text.win_bot)
         game_candies.new_game()
+        game_candies.game_bot = 0
         return True
     else:
         return False
