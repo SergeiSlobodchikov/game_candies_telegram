@@ -1,5 +1,4 @@
 from aiogram.types import Message
-from aiogram.dispatcher.filters import Text
 from config import dp
 import text
 import game_candies
@@ -9,6 +8,7 @@ import random
 @dp.message_handler(commands=['start'])
 async def on_start(message: Message):
     await message.answer(text=f"{message.from_user.first_name}" + f'{text.greeting}')
+    print(message.from_user.id)
 
 
 @dp.message_handler(commands=['set'])
@@ -22,6 +22,26 @@ async def set_total(message: Message):
             await message.answer(f'{message.from_user.first_name} напиши цифрами')
     else:
         await message.answer(f'{message.from_user.first_name} не меняй правила во время игры')
+
+@dp.message_handler(commands=['my_id'])
+async def my_id(message: Message):
+    await message.answer(message.from_user.id)
+
+@dp.message_handler(commands=['duel'])
+async def mes_duel(message: Message):
+    game_candies.pvp_add_player(int(message.from_user.id))
+    game_candies.pvp_add_player(int(message.text.split()[1]))
+    first = random.randint(0, 1)
+    total = game_candies.get_total()
+    if first:
+        a, b = [0, 1]
+    else:
+        a, b = [1, 0]
+    await dp.bot.send_message(game_candies.duel_player(a), text.first_step(total))
+    await dp.bot.send_message(game_candies.duel_player(b), text.two_step)
+    current = game_candies.duel_player(0) if first else game_candies.duel_player(1)
+    game_candies.current_player(int(current))
+    game_candies.new_game()
 
 
 @dp.message_handler(commands='new_game')
@@ -49,18 +69,21 @@ async def take(message: Message):
             if (0 < take_candies < 29) and take_candies <= total:
                 game_candies.take_candies(take_candies)
                 total = game_candies.get_total()
-                if await who_won(message, take_candies, 'player'):
-                    return
-                await message.answer(f'{name} взял {take_candies} {text.take_people} '
-                                     f'{total} {text.robot}')
-                await bot_turn(message)
+                if len(game_candies.duel) == 0:
+                    if await who_won(message, take_candies, 'player'):
+                        return
+                    await message.answer(f'{name} взял {take_candies} {text.take_people} '
+                                         f'{total} {text.robot}')
+                    await bot_turn(message)
+                else:
+                    if await who_won_player(message, take_candies):
+                        return
             else:
                 if total <= 28:
                     await message.answer(text.error_total(total))
                 else:
                     await message.answer(text.error)
-        else:
-            pass
+
 
 
 async def bot_turn(message):
@@ -78,6 +101,23 @@ async def bot_turn(message):
         return
     await message.answer(text.take_bot(take_candies, int(game_candies.get_total())))
     await player_turn(message)
+
+async def who_won_player(message, take_candies: int):
+    if game_candies.get_total() == 0:
+        name = message.from_user.first_name
+        await message.answer(f'Ура! {name} ты победил!')
+        await dp.bot.send_message(game_candies.enemy_id(), 'К сожалению ты проиграл! Твой оппонент оказался умнее! :)')
+        game_candies.new_game()
+    else:
+        name = message.from_user.first_name
+        total = game_candies.get_total()
+        await message.answer(text.total_candy(total))
+        await dp.bot.send_message(game_candies.enemy_id(), f'{name} взял {take_candies} конфет. На столе осталось {total}')
+        await dp.bot.send_message(game_candies.enemy_id(), f'Сколько возьмешь?')
+        game_candies.switch_players()
+
+
+
 
 
 async def who_won(message, take_candies: int, player: str):
