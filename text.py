@@ -13,23 +13,17 @@ greeting = emo(f''' , :winking_face: приветствую!
 id можно узнать через /my_id
 брать можно не более 28 :candy: за раз,
 игрок выбирается рандомно''')
-
-
-def first_step(num):
-    return emo(f'Первый ход за тобой :beaming_face_with_smiling_eyes:, на столе {num} :candy:, бери  ')
-
-
-def total_candy(num):
-    return emo(f'На столе осталось {num} :candy:')
-
-
 two_step = emo(f'Первый ход за твоим противником :winking_face_with_tongue:! Жди своего хода')
 step = emo(f', твой ход! Сколько возьмешь :candy: ? ')
 take_people = emo(f' :candy: и на столе осталось')
 robot = emo('ходит :robot:...')
 error = emo(':angry_face: Ты взял не правильное количество :candy: надо от 1 до 28 ')
-win_bot = emo(f':robot: забрал оставшиеся :candy: и победил :monkey_face: он и не сомневался в себе')
-win_people = emo(f' забрал оставшиеся :candy: и победил :robot: так тебе и надо консервная банка')
+win_bot = emo(f':robot: забрал оставшиеся :candy: и победил :monkey_face:, он и не сомневался в себе')
+win_people = emo(f' забрал оставшиеся :candy: и победил :robot:, так тебе и надо консервная банка')
+
+
+def first_step(num):
+    return emo(f'Первый ход за тобой :beaming_face_with_smiling_eyes:, на столе {num} :candy:, бери  ')
 
 
 def pvp_take(name: str, take_candies, total):
@@ -46,3 +40,8 @@ def error_total(text):
 
 def take_bot(take, remnant):
     return emo(f':robot: взял {take} :candy: и их осталось {remnant}')
+
+
+def total_candy(num):
+    return emo(f'На столе осталось {num} :candy:, ход противника')
+
