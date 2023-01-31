@@ -3,7 +3,7 @@ total = max_total
 game = False
 duel = []
 current = 0
-
+game_bot = 0
 
 def pvp_add_player(text: int):
     global duel

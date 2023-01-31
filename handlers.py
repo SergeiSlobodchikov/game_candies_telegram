@@ -49,6 +49,7 @@ async def mes_duel(message: Message):
 
 @dp.message_handler(commands='new_game')
 async def start_new_game(message: Message):
+    game_candies.game_bot = 1
     game_candies.new_game()
     if game_candies.check_game():
         toss = random.choice([False, True])
@@ -67,7 +68,7 @@ async def take(message: Message):
     name = message.from_user.first_name
     if game_candies.check_game():
         if message.text.isdigit():
-            if game_candies.current == int(message.from_user.id):
+            if game_candies.current == int(message.from_user.id) or game_candies.game_bot == 1:
                 take_candies = int(message.text)
                 total = game_candies.get_total()
                 if (0 < take_candies < 29) and take_candies <= total:
